@@ -1,0 +1,32 @@
+name: iOS Build
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '16.1.0'
+        
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Tuist
+        run: |
+          brew tap tuist/tuist
+          brew install --formula tuist@4.41.0
+
+      - name: Tuist Install
+        run: |
+          tuist install
+
+      - name: Build iOS App
+        run: |
+          tuist build Example --generate --clean --no-binary-cache --platform iOS
+          
